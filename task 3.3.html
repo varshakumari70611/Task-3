@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>😂 Joke Generator</title>
+  <style>
+    * {
+      margin: 0;5;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: url('https://i.pinimg.com/originals/6a/1b/1a/6a1b1a9ee20a58e1e8973cd6cf93a7fc.jpg') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #333;
+    }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      color: #ff5e00;
+    }
+
+    .joke-box {
+      margin-top: 20px;
+      padding: 20px;
+      background: #fffbe7;
+      border-left: 6px solid #ff5e00;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      min-height: 100px;
+    }
+
+    button {
+      padding: 12px 25px;
+      font-size: 1rem;
+      background-color: #ff5e00;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #e04e00;
+    }
+
+    @media screen and (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .joke-box {
+        font-size: 1rem;
+      }
+
+      button {
+        font-size: 0.9rem;
+        padding: 10px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>😂 Joke Generator</h1>
+    <button onclick="getJoke()">Tell Me a Joke</button>
+    <div class="joke-box" id="jokeBox">Click the button to get a joke.</div>
+  </div>
+
+  <script>
+   function getJoke() {
+  fetch('https://v2.jokeapi.dev/joke/Any?type=single')
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('jokeBox').innerHTML = `
+        <p>${data.joke}</p>`;
+    })
+    .catch(err => {
+      document.getElementById('jokeBox').innerText = "Oops! Couldn't fetch a joke.";
+      console.error(err);
+    });
+}
+
+        
+  </script>
+</body>
+</html>
