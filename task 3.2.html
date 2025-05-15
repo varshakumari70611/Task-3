@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BCA Quiz App</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .quiz-container {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px #000;
+      width: 90%;
+      max-width: 600px;
+      text-align: center;
+    }
+
+    h1, h2 {
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      width: 80%;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #00c6ff;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .option {
+      display: block;
+      margin: 10px 0;
+      background: #fff;
+      color: #000;
+      border-radius: 6px;
+      padding: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .option:hover {
+      background-color: #00c6ff;
+      color: white;
+    }
+
+    #result {
+      font-size: 20px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .quiz-container {
+        padding: 20px;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container" id="quizBox">
+    <h1>BCA Quiz</h1>
+    <div id="startScreen">
+      <h2>Enter Your Name</h2>
+      <input type="text" id="username" placeholder="Your Name" />
+      <button onclick="startQuiz()">Start Quiz</button>
+    </div>
+
+    <div id="quizScreen" style="display:none;">
+      <h2 id="questionText">Question</h2>
+      <div id="optionsContainer"></div>
+      <button onclick="nextQuestion()">Next</button>
+    </div>
+
+    <div id="resultScreen" style="display:none;">
+      <h2 id="finalMessage"></h2>
+      <p id="result"></p>
+    </div>
+  </div>
+
+  <script>
+    const quizData = [
+      { question: "What does DBMS stand for?", options: ["Database Management System", "Data Backup & Monitoring Software", "Digital Base Management Setup", "None of the above"], answer: "Database Management System" },
+      { question: "Which data structure uses LIFO?", options: ["Queue", "Array", "Stack", "Tree"], answer: "Stack" },
+      { question: "Which is NOT a valid datatype in C?", options: ["int", "float", "real", "char"], answer: "real" },
+      { question: "Which protocol is used for secure web browsing?", options: ["HTTP", "FTP", "HTTPS", "SSH"], answer: "HTTPS" },
+      { question: "What is the full form of CPU?", options: ["Central Processing Unit", "Computer Program Utility", "Control Panel Unit", "Central Power Unit"], answer: "Central Processing Unit" },
+      { question: "Which of these is a front-end language?", options: ["PHP", "JavaScript", "Python", "SQL"], answer: "JavaScript" },
+      { question: "What does RAM stand for?", options: ["Read Access Memory", "Random Access Memory", "Rapid Application Module", "Real Access Management"], answer: "Random Access Memory" },
+      { question: "HTML is used to?", options: ["Design structure", "Perform calculations", "Define behavior", "Access database"], answer: "Design structure" },
+      { question: "What is the default port for HTTP?", options: ["20", "80", "443", "21"], answer: "80" },
+      { question: "Which company developed Java?", options: ["Oracle", "Microsoft", "IBM", "Sun Microsystems"], answer: "Sun Microsystems" },
+      { question: "What does CSS stand for?", options: ["Computer Style Sheet", "Cascading Style Sheet", "Creative Style Sheet", "Control Style Sheet"], answer: "Cascading Style Sheet" },
+      { question: "Which command is used to initialize a Git repo?", options: ["git start", "git init", "git push", "git commit"], answer: "git init" },
+      { question: "Which layer of the OSI model handles IP addressing?", options: ["Application", "Transport", "Network", "Data Link"], answer: "Network" },
+      { question: "What is SQL used for?", options: ["Styling web pages", "Structuring data", "Database management", "Animation"], answer: "Database management" },
+      { question: "Which is NOT an OOP concept?", options: ["Encapsulation", "Polymorphism", "Abstraction", "Compilation"], answer: "Compilation" },
+      { question: "Python is a ___ language?", options: ["Compiled", "Markup", "Interpreted", "Binary"], answer: "Interpreted" },
+      { question: "Which symbol is used for ID selector in CSS?", options: [".", "#", ":", "*"], answer: "#" },
+      { question: "Which tag is used for inserting a line break in HTML?", options: ["<break>", "<br>", "<lb>", "<newline>"], answer: "<br>" },
+      { question: "Which function is used to print in Java?", options: ["printf()", "System.print()", "System.out.println()", "console.log()"], answer: "System.out.println()" },
+      { question: "Which keyword is used to create a class in C++?", options: ["function", "class", "define", "object"], answer: "class" }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let userName = "";
+
+    function startQuiz() {
+      const nameInput = document.getElementById("username").value.trim();
+      if (nameInput === "") {
+        alert("Please enter your name.");
+        return;
+      }
+      userName = nameInput;
+      document.getElementById("startScreen").style.display = "none";
+      document.getElementById("quizScreen").style.display = "block";
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      const questionData = quizData[currentQuestion];
+      document.getElementById("questionText").innerText = `Q${currentQuestion + 1}: ${questionData.question}`;
+      const optionsContainer = document.getElementById("optionsContainer");
+      optionsContainer.innerHTML = "";
+      questionData.options.forEach(option => {
+        const div = document.createElement("div");
+        div.classList.add("option");
+        div.innerText = option;
+        div.onclick = () => selectOption(option);
+        optionsContainer.appendChild(div);
+      });
+    }
+
+    function selectOption(selected) {
+      const correct = quizData[currentQuestion].answer;
+      if (selected === correct) score++;
+      nextQuestion();
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      if (currentQuestion < quizData.length) {
+        loadQuestion();
+      } else {
+        endQuiz();
+      }
+    }
+
+    function endQuiz() {
+      document.getElementById("quizScreen").style.display = "none";
+      document.getElementById("resultScreen").style.display = "block";
+      document.getElementById("finalMessage").innerText = `Great work, ${userName}!`;
+      document.getElementById("result").innerText = `Your score is ${score} out of ${quizData.length}`;
+    }
+  </script>
+</body>
+</html>
